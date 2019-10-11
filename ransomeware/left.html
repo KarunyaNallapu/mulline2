@@ -1,0 +1,39 @@
+ /*GREY-----------------------------------------------------------------------------*/
+             var circle = svg.append("circle")
+               .attr("cx", 940)
+               .attr("cy", 240)
+               .attr("r", 26)
+               .attr("stroke","grey")
+               .attr("stroke-width","5px")
+                
+                .attr("fill","none")
+            var circle=svg.append("circle")
+                .attr("cx", 1200)
+               .attr("cy", 237.5)
+               .attr("r", 17)
+               
+                .attr("stroke", "grey")
+                .attr("stroke-width","5px")
+                .attr("fill","none")
+                svg.append("svg:defs").append("svg:marker")
+
+    .attr("id", "triangle")
+    .attr("refX", 6)
+    .attr("refY", 6)
+    .attr("markerWidth", 30)
+    .attr("markerHeight", 30)
+    .attr("markerUnits","userSpaceOnUse")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 16 8 0 16 0 8")
+    .style("fill", "grey");      
+    //line              
+        svg.append("line")
+             .attr("x1",1050)
+            .attr("y1", 233)
+            .attr("x2", 1035)
+            .attr("y2", 233)
+           
+            .attr("stroke","grey")
+              .attr("stroke-width","5px")
+            .attr("marker-end", "url(#triangle)"); 

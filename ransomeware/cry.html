@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>done</title>
+    <script type="text/javascript" src="d3.min.js"></script>
+    <!------<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        a.{
+            font-style: sans-serif;
+            font-size: 20px;
+            font-color:orange;
+        }
+    </style>---------->
+     
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://fontawesome.com/icons/comments-alt?style=regular">
+</head>
+<body>
+  <div id = "svgcontainer"></div>
+ 
+
+  <!---- <div class="a"></div>------->
+         <script language = "javascript">
+            var width = 1300;
+            var height = 700;
+            var svg = d3.select("#svgcontainer")
+               .append("svg")
+               .attr("width", width)
+               .attr("height", height);
+
+                   
+     /*--------------ORANGE---------*/     
+            var circle = svg.append("circle")
+               .attr("cx", )
+               .attr("cy", 590)
+               .attr("r", 26)
+               .attr("transform","translate(0,0)")
+               .attr("stroke","orange")
+               .attr("stroke-width","5px")              
+                .attr("fill","none")
+
+          
+            var circle=svg.append("circle")
+                .attr("cx", 805)
+               .attr("cy", 587.5)
+               .attr("r", 17)   
+               .attr("transform","translate(-20,0)")            
+                .attr("stroke", "orange")
+                .attr("stroke-width","5px")
+                .attr("fill","none")
+             
+           
+
+
+svg.append("svg:defs").append("svg:marker")
+    .attr("id", "triangle")
+    .attr("refX", 8)
+    .attr("refY", 8)
+    .attr("markerWidth", 70)
+    .attr("markerHeight", 70)
+    .attr("markerUnits","userSpaceOnUse")
+    .attr("transform", "translate(0, 0)")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 16 8 0 16 0 8")
+    .style("fill", "orange");
+       
+    //line              
+        svg.append("line")
+            .attr("x1",  795)
+            .attr("y1", 592)
+            .attr("x2",680 )
+            .attr("y2", 592)
+            .attr("transform", "translate(-25, -2)")
+            .attr("stroke","orange")
+              .attr("stroke-width","3px")
+            .attr("marker-end", "url(#triangle)");
+
+
+
+              /*---------------------------SEAGREEN---------------------------------*/
+            var circle = svg.append("circle")
+               .attr("cx", 1080)
+               .attr("cy", 100)
+               .attr("r", 26)
+               .attr("stroke","SEAGREEN")
+               .attr("stroke-width","5px")
+                 .attr("transform", "translate(0, 0) ") 
+                .attr("fill","none")
+          
+            var circle=svg.append("circle")
+                .attr("cx", 1340)
+               .attr("cy", 97.5)
+               .attr("r", 17)
+               .attr("transform", "translate(-435, 0) ")
+                .attr("stroke", "SEAGREEN")
+                .attr("stroke-width","5px")
+                .attr("fill","none")
+         
+                svg.append("svg:defs").append("svg:marker")
+                .attr("id", "triangle")
+    .attr("refX", 6)
+    .attr("refY", 6)
+    .attr("markerWidth", 30)
+    .attr("markerHeight", 30)
+    .attr("markerUnits","userSpaceOnUse")
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0 0 16 8 0 16 0 8")
+    .style("fill", "SEAGREEN");    
+
+
+     //line              
+        svg.append("line")
+             .attr("x1",1220)
+            .attr("y1", 93)
+            .attr("x2", 1325)
+            .attr("y2", 93)
+             .attr("transform", "translate(-300, 3.5) ")
+            .attr("stroke","SEAGREEN")
+              .attr("stroke-width","3px")
+            .attr("marker-end", "url(#triangle)"); 
+
+         </script>
+      </div>
+</body>
+</html>
