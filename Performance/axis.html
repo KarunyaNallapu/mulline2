@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+body{
+  font:sans-serif 12px;
+    background-color:#808080;
+}
+svg{
+  background-color:	#808080;
+  display: inline-block;
+    position: relative;
+
+
+    vertical-align: top;
+    overflow: hidden;
+}
+
+.axis {
+	font-size: 14px;
+  font-family: sans-serif;
+}
+
+text {
+  fill: #C0C0C0;
+  stroke: none;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: none;
+  stroke-width: 6px;
+
+}
+
+.grid path,line {
+  stroke : rgba(97, 100, 100, 0.568);
+    stroke-width: 0.5px;
+  
+}
+    .grid text{
+        font-family: sans-serif;
+        font-size:14px;
+    }
+
+    .axis-title {
+	text-anchor: end;
+  fill: #5D6971;
+
+}
+.d3-tip {
+  line-height: 1;
+  font-size:14px;
+  margin-left:50px;
+  margin-top: -12px;
+  padding: 12px 10px 10px 14px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  top:100px;;
+  left:50px;
+  
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "";
+  position: absolute;
+  text-align: center; 
+  
+    border-left: 22px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid rgba(0, 0, 0, 0.8);
+    transform:rotate(-43deg);
+    margin: 25px 0 0 -87px;
+}
+.label{
+  fill:none;
+  stroke-width: 4px;
+  font:sans-serif 12px #5D6971;
+}
+.legend-name{
+  font-family: sans-serif;
+  font-size:15px;
+  color:silver;
+}
+
+
+
+</style>
+<body>
+
+<!-- load the d3.js library -->  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+  var data = [
+  {
+    name: "USA",
+    values: [
+      {date: "1/2000", price: "100"},
+      {date: "2/2001", price: "110"},
+      {date: "3/2002", price: "145"},
+      {date: "4/2003", price: "241"},
+      {date: "5/2004", price: "101"},
+      {date: "6/2005", price: "90"},
+      {date: "7/2006", price: "10"},
+      {date: "8/2007", price: "35"},
+      {date: "9/2008", price: "21"},
+      {date: "10/2009", price: "201"}
+    ]
+  },
+  {
+    name: "Canada",
+    values: [
+      {date: "1/2000", price: "200"},
+      {date: "2/2001", price: "120"},
+      {date: "3/2002", price: "33"},
+      {date: "4/2003", price: "21"},
+      {date: "5/2004", price: "51"},
+      {date: "6/2005", price: "190"},
+      {date: "7/2006", price: "120"},
+      {date: "8/2007", price: "85"},
+      {date: "9/2008", price: "221"},
+      {date: "10/2009", price: "101"}
+    ]
+  },
+  {
+    name: "Maxico",
+    values: [
+      {date: "1/2000", price: "50"},
+      {date: "2/2001", price: "10"},
+      {date: "3/2002", price: "5"},
+      {date: "4/2003", price: "71"},
+      {date: "5/2004", price: "20"},
+      {date: "6/2005", price: "9"},
+      {date: "7/2006", price: "220"},
+      {date: "8/2007", price: "235"},
+      {date: "9/2008", price: "61"},
+      {date: "10/2009", price: "10"}
+    ]
+  }
+];
+
+// Set default width and height, calculate ratio
+var default_width = 960;
+var default_height = 500;
+var default_ratio = default_width / default_height;
+
+// Current (non-responsive) width and height are calcuated from the default, minus the margins
+var margin = {top: 20, right: 70, bottom: 40, left: 70};
+width = default_width - margin.left - margin.right,
+    height = default_height - margin.top - margin.bottom;
+
+// Determine current size, which determines vars
+function set_vars() {
+  //alert('setting vars')
+  current_width = window.innerWidth;
+  current_height = window.innerHeight;
+
+  current_ratio = current_width / current_height;
+
+  // Check if height is limiting factor
+  if ( current_ratio > default_ratio ){
+    h = current_height;
+    w = h * default_ratio;
+  // Else width is limiting
+  } else {
+    w = current_width;
+    h = w / default_ratio;
+  }
+
+  // Set new width and height based on graph dimensions
+  width = w - margin.left - margin.right;
+  height = h - margin.top - margin.bottom;
+
+};
+  
+set_vars();
+
+function drawGraphic() {
+
+    var parseTime = d3.timeParse("%m/%Y");
+
+    var formatTime = d3.timeFormat("%B");
+
+    var keys = ["S&P 500 TF","Real Estate ETF" ];
+
+
+
+
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+
+var y = d3.scaleLinear().range([height, 0]);
+
+
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+// // Get the data
+// d3.csv("data1.csv", function(error, data) {
+//   if (error) throw error;
+
+//   // format the data
+//   data.forEach(function(d) {
+//       d.date = parseTime(d.date);
+//       d.date=+d.date;
+//       d.price = +d.price;
+//       //d.open=+d.open;
+      
+//   });
+
+/* Scale */
+var xScale = d3.scaleTime()
+  .domain(d3.extent(data[0].values, d => d.date))
+  .range([0, width-margin]);
+
+var yScale = d3.scaleLinear()
+  .domain([0, d3.max(data[0].values, d => d.price)])
+  .range([height-margin, 0]);
+
+var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+  var tip = d3.tip()
+              .attr('class', 'd3-tip')
+              .offset([-10, 0])
+              .html(function(d) {
+                    return formatTime(d.date) +": $"+d.price
+                       })
+
+   svg.call(tip);
+
+  // Add the Grid
+  //Add X-Axis
+   svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .attr("class","grid")
+      .call(d3.axisBottom(x)
+              .tickSize(-width)
+              .tickPadding(10) 
+              .tickFormat(d3.timeFormat("%B")));
+
+  //Add Y-Axis
+   svg.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y)
+              .tickSize(0)
+              //.ticks(7)
+              .tickPadding(10)
+              .tickFormat(function(d,i){return "$"+d;}))
+        
+      .append("text")
+      .attr("class", "axis-title")
+      .attr("y", 6)
+      .attr("dy", "1em")
+
+//Adding circles to the line
+   svg.selectAll("myCircles")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("fill", "green")
+        .attr("stroke", "none")
+        .attr("cx", function(d) { return x(d.date) })
+        .attr("cy", function(d) { return y(d.price) })
+        .attr("r", 7)
+      .on('mouseover', tip1.show)
+      .on('mouseout', tip1.hide)
+       
+
+        
+
+// Adding legends
+var width1=30,
+    height1=20;
+   svg.selectAll("mydots")
+      .data(keys)
+      .enter()
+      .append("rect")
+      .attr("class","label")
+      .attr("x", function(d,i){          
+             return ((i*height*.8)+70)})
+      .attr("width", width1)
+      .attr("height", height1)
+      .style("alignment-baseline", "middle")
+      .style("stroke",function(d,i){return color(d)})
+     
+
+     
+// Adding legend-name for each legend
+   svg.selectAll("mylabels")
+      .data(keys)
+      .enter()
+      .append("text")
+      .attr("class","legend-name")
+      .attr("x", function(d,i){return (i*height*.8)+105})
+      .attr("y", 15)    
+      .text(function(d,i){return d})
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")   
+  
+
+
+
+});
+}; // End drawGraphic function
+
+drawGraphic();
+
+// Use a timer so the chart is not constantly redrawn while window is being resized.
+var resizeTimer;
+window.onresize = function(event) {
+
+//$(window).on('resize', function(e) {
+ clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function()
+  {
+    var s = d3.selectAll('svg');
+    s = s.remove();
+    set_vars();
+    drawGraphic();
+  }, 100);
+}
+
+
+
+
+</script>
+</body>
