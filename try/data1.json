@@ -1,0 +1,20 @@
+[
+  {
+    "name": "USA",
+    "values": [
+      {"date": "Jan/2019","price": "100"},
+      {"date": "Feb/2019", "price": "110"},
+      {"date": "Mar/2019", "price": "145"}
+
+    ]
+  },
+  {
+    "name": "Maxico",
+    "values": [
+      {"date": "Jan/2019", "price": "50"},
+      {"date": "Feb/2019", "price": "10"},
+      {"date": "Mar/2019", "price": "5"}
+
+    ]
+  }
+]

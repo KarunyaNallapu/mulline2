@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+body{
+  font:sans-serif 12px;
+    background-color:lavender;
+}
+svg{
+  background-color:	#808080;
+}
+
+.axis {
+	font-size: 14px;
+  font-weight: bold;
+}
+
+text {
+  fill: #C0C0C0;
+  stroke: none;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: none;
+  stroke-width: 6px;
+
+}
+
+.grid path,line {
+  stroke : rgba(97, 100, 100, 0.568);
+    stroke-width: 0.5px;
+  
+}
+    .grid text{
+       
+        font-size:14px;
+    }
+
+    .axis-title {
+	text-anchor: end;
+  fill: #5D6971;
+  font-weight: normal;
+}
+.d3-tip {
+  line-height: 1;
+  font-size:14px;
+  width:100px;
+  height:38px;
+  padding: 12px 10px 10px 14px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "";
+  position: absolute;
+  text-align: center;
+  width: 0;
+    height: 0;
+    border-left: 22px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid rgba(0, 0, 0, 0.8);
+    transform:rotate(-43deg);
+    z-index:4;
+    margin: 28px 0 0 -87px;
+}
+.label-one{
+  fill:none;
+  stroke:green;
+  stroke-width: 4px;
+  font:sans-serif 12px #5D6971;
+}
+.label-two{
+  fill:none;
+  stroke:yellow;
+  stroke-width: 4px;
+  font :sans-serif 12px #5D6971;
+}
+
+
+
+</style>
+<body>
+
+<!-- load the d3.js library -->  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 860 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+
+    var parseTime = d3.timeParse("%m/%Y");
+    var formatTime = d3.timeFormat("%b");
+
+    var keys = ["S&P 500 TF","Real Estate ETF" ]
+
+
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+// define the 1st line
+var valueline = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); })
+    .curve(d3.curveMonotoneX);
+
+// define the 2nd line
+var valueline2 = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.open); })
+    .curve(d3.curveMonotoneX);
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("data1.csv", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+      d.date = parseTime(d.date);
+      d.date=+d.date;
+      d.close = +d.close;
+      
+  });
+
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([100,700]);
+
+  var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return formatTime(d.date) +": $"+d.close
+  })
+  var tip1 = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d)
+   {return formatTime(d.date) +": $"+d.open;
+  })
+
+  // Add the valueline path.
+  svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .style("class","green")
+      .attr("stroke","green")
+      .attr("stroke-width","4px")
+      .style("fill","none")
+      .attr("d", valueline);
+
+  // Add the valueline2 path.
+  svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .style("fill","none")
+      .style("stroke", "yellow")
+      .attr("stroke-width","4px")
+      .attr("d", valueline2);
+
+      svg.call(tip);
+      svg.call(tip1);
+  // Add the Grid
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .attr("class","grid")
+      .call(d3.axisBottom(x).tickSize(-width).tickFormat(d3.timeFormat("%b")));
+      
+  // Add the X Axis
+   svg.append("g")
+      .attr("class","axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .selectAll('.axis--x .tick text')
+      .append('tspan')
+      .attr("class", "axis-tspan");
+       
+  
+        svg.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).tickSize(0).ticks(7).tickFormat(function(d,i){return "$"+d;}))
+        
+    	.append("text")
+        .attr("class", "axis-title")
+       // .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "1em")
+
+  svg.selectAll("myCircles")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("fill", "green")
+        .attr("stroke", "none")
+        .attr("cx", function(d) { return x(d.date) })
+        .attr("cy", function(d) { return y(d.close) })
+        .attr("r", 7)
+        .on('mouseover', tip1.show)
+      .on('mouseout', tip1.hide)
+       
+
+    svg.selectAll("myCircles")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("fill", "yellow")
+        .attr("stroke", "none")
+        .attr("cx", function(d) { return x(d.date) })
+        .attr("cy", function(d) { return y(d.open) })
+        .attr("r", 7)
+        .on('mouseover', tip1.show)
+      .on('mouseout', tip1.hide)
+        
+
+// Add one dot in the legend for each name.
+svg.selectAll("mydots")
+     .data(keys)
+     .enter()
+     .append("rect")
+     .attr("class","label-one")
+     .attr("x", function(d,i){return (200)})
+     .attr("width", 30)
+     .attr("height", 20)
+
+  svg.selectAll("mydots")
+     .data(keys)
+     .enter()
+     .append("rect")
+     .attr("class","label-two")
+     .attr("x", function(d,i){return (400)})
+     .attr("width", 30)
+     .attr("height", 20)
+     
+// Add one dot in the legend for each name.
+svg.selectAll("mylabels")
+     .data(keys)
+     .enter()
+     .append("text")
+     .attr("x", function(d,i){return (220)})
+     .attr("y", 12)
+     .attr("dx", "1em")
+     .attr("dy",".2em")
+     .style("fill","silver")
+     .text("S&P 500 ETF")
+     .attr("text-anchor", "left")
+     .style("alignment-baseline", "middle")   
+  
+  svg.selectAll("mylabels")
+     .data(keys)
+     .enter()
+     .append("text")
+     .attr("x", function(d,i){return (420)})
+     .attr("y", 12)
+     .attr("dx", "1em")
+     .attr("dy",".2em")
+     .style("fill","silver")
+     .text("Real Estate ETF")
+     .attr("text-anchor", "left")
+     .style("alignment-baseline", "middle")
+
+
+});
+
+</script>
+</body>
